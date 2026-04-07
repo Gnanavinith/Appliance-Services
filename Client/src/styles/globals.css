@@ -1,0 +1,106 @@
+/* Import Geist Font */
+@import url('https://fonts.cdnfonts.com/css/geist');
+
+/* Global Styles - Minimal overrides, let Tailwind handle styling */
+
+/* Ant Design Overrides - Emerald Theme */
+.ant-btn-primary {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  border-color: #059669 !important;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+  border-color: #047857 !important;
+  box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+.ant-btn-default {
+  border-color: #10b981 !important;
+  color: #059669 !important;
+}
+
+.ant-btn-default:hover {
+  background-color: #f0fdf4 !important;
+  border-color: #059669 !important;
+  color: #047857 !important;
+}
+
+.ant-steps-item-icon {
+  border-color: #10b981 !important;
+  background-color: #f0fdf4 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  border-color: #059669 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-title {
+  color: #047857 !important;
+  font-weight: 600;
+}
+
+.ant-steps-item-tail {
+  background-color: #a7f3d0 !important;
+}
+
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+}
+
+.ant-card {
+  transition: all 0.3s ease;
+}
+
+.ant-card:hover {
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.15);
+  transform: translateY(-4px);
+}
+
+.ant-input:focus,
+.ant-input-focused {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ant-picker-focused {
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Loading States */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .mobile-hide {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .desktop-hide {
+    display: none;
+  }
+}

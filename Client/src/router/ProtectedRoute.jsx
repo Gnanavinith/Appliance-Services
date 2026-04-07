@@ -1,0 +1,20 @@
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { isAuthenticated, role } = useSelector((state) => state.auth);
+
+  if (!isAuthenticated) {
+    // Redirect to home page (landing page with login/signup modals)
+    return <Navigate to="/" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
