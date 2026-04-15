@@ -34,7 +34,7 @@ const Branches = () => {
         setBranches(response.data);
       }
     } catch (error) {
-      toast.showError(error.message || 'Failed to load branches');
+      toast.error(error.message || 'Failed to load branches');
     } finally {
       setLoading(false);
     }
@@ -45,11 +45,11 @@ const Branches = () => {
     try {
       const response = await branchesApi.deleteBranch(branchId);
       if (response.success) {
-        toast.showSuccess('Branch deleted successfully');
+        toast.success('Branch deleted successfully');
         fetchBranches();
       }
     } catch (error) {
-      toast.showError(error.message || 'Failed to delete branch');
+      toast.error(error.message || 'Failed to delete branch');
     }
   };
 

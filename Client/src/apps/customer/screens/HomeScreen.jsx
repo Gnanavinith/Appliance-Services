@@ -70,47 +70,48 @@ const HomeScreen = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-white">
       {contextHolder}
       
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200 shadow-sm">
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b border-[#efefef]">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <span className="text-2xl">👋</span>
                 <div>
-                  <p className="text-sm text-slate-500">Welcome back</p>
-                  <h2 className="text-xl font-bold text-slate-900">{user?.name || 'Guest'}</h2>
+                  <p className="text-xs text-[#9ca3af] font-medium">Welcome back</p>
+                  <h2 className="text-xl font-bold text-[#111]" style={{ fontFamily: "'DM Serif Display', serif" }}>{user?.name || 'Guest'}</h2>
                 </div>
               </div>
             </div>
-            <Button 
-              icon={<HiOutlineCalendarDays className="text-lg" />}
+            <button 
               onClick={() => navigate('/customer/bookings')}
-              className="bg-emerald-700 hover:bg-emerald-800 text-white border-none"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-wider border transition-all hover:scale-[1.03] active:scale-[0.97]"
+              style={{ background: '#111', color: '#fff', borderColor: '#111' }}
             >
+              <HiOutlineCalendarDays className="text-base" />
               My Bookings
-            </Button>
+            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Hero Section */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 p-8 md:p-12 mb-8 shadow-2xl">
+        <div className="relative overflow-hidden rounded-[20px] bg-[#111] p-8 md:p-12 mb-8">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#d97706] rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#d97706] rounded-full blur-3xl"></div>
           </div>
           
           <div className="relative z-10">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>
               Expert Appliance Services<br />at Your Doorstep
             </h1>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl">
+            <p className="text-lg text-white/80 mb-8 max-w-2xl" style={{ fontSize: '15px', lineHeight: '1.8' }}>
               Book certified technicians for all your home appliances with warranty protection
             </p>
             
@@ -123,7 +124,7 @@ const HomeScreen = () => {
                 size="large"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="shadow-lg [&_.ant-input]:rounded-xl [&_.ant-btn-primary]:rounded-xl [&_.ant-btn-primary]:bg-emerald-700"
+                className="shadow-lg [&_.ant-input]:rounded-xl [&_.ant-btn-primary]:rounded-xl [&_.ant-btn-primary]:bg-[#d97706]"
               />
             </div>
           </div>
@@ -131,15 +132,15 @@ const HomeScreen = () => {
 
         {/* Category Filter */}
         <div className="mb-8 flex items-center gap-4 flex-wrap">
-          <span className="text-lg font-semibold text-slate-700 flex items-center gap-2">
-            <HiOutlineFunnel className="w-5 h-5" /> Filter by Category:
+          <span className="text-sm font-bold text-[#6b7280] flex items-center gap-2 uppercase tracking-wider">
+            <HiOutlineFunnel className="w-5 h-5 text-[#d97706]" /> Filter:
           </span>
           <Select
             value={selectedCategory}
             onChange={setSelectedCategory}
             className="min-w-[220px]"
             size="large"
-            style={{ borderRadius: '12px' }}
+            style={{ borderRadius: '999px', border: '1px solid #efefef' }}
           >
             {categories.map(cat => (
               <Option key={cat.value} value={cat.value}>{cat.label}</Option>
@@ -149,8 +150,8 @@ const HomeScreen = () => {
 
         {/* Services Grid */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 mb-6">
-            Available Services <span className="text-emerald-700">({filteredServices.length})</span>
+          <h2 className="text-3xl font-bold text-[#111] mb-6" style={{ fontFamily: "'DM Serif Display', serif" }}>
+            Available Services <span className="text-[#d97706]">({filteredServices.length})</span>
           </h2>
           
           {filteredServices.length > 0 ? (
@@ -173,27 +174,27 @@ const HomeScreen = () => {
 
         {/* Features Section */}
         <div className="mt-16 mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 text-center mb-10">Why Choose Us</h2>
+          <h2 className="text-3xl font-bold text-[#111] text-center mb-10" style={{ fontFamily: "'DM Serif Display', serif" }}>Why Choose Us</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 rounded-[20px] bg-white border border-[#efefef] hover:shadow-xl transition-shadow duration-300">
               <div className="text-6xl mb-4">🛡️</div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Verified Professionals</h3>
-              <p className="text-slate-600">Background-checked, trained technicians</p>
+              <h3 className="text-xl font-semibold text-[#111] mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>Verified Professionals</h3>
+              <p className="text-[#6b7280] text-sm">Background-checked, trained technicians</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 rounded-[20px] bg-white border border-[#efefef] hover:shadow-xl transition-shadow duration-300">
               <div className="text-6xl mb-4">⏱️</div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">On-Time Service</h3>
-              <p className="text-slate-600">Flexible scheduling, timely arrivals</p>
+              <h3 className="text-xl font-semibold text-[#111] mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>On-Time Service</h3>
+              <p className="text-[#6b7280] text-sm">Flexible scheduling, timely arrivals</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 rounded-[20px] bg-white border border-[#efefef] hover:shadow-xl transition-shadow duration-300">
               <div className="text-6xl mb-4">💰</div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Transparent Pricing</h3>
-              <p className="text-slate-600">No hidden charges, upfront quotes</p>
+              <h3 className="text-xl font-semibold text-[#111] mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>Transparent Pricing</h3>
+              <p className="text-[#6b7280] text-sm">No hidden charges, upfront quotes</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div className="text-center p-6 rounded-[20px] bg-white border border-[#efefef] hover:shadow-xl transition-shadow duration-300">
               <div className="text-6xl mb-4">✅</div>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Service Warranty</h3>
-              <p className="text-slate-600">90-day warranty on all repairs</p>
+              <h3 className="text-xl font-semibold text-[#111] mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>Service Warranty</h3>
+              <p className="text-[#6b7280] text-sm">90-day warranty on all repairs</p>
             </div>
           </div>
         </div>

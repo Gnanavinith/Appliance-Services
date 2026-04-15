@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Bookings from './pages/Bookings';
 import MyTechnicians from './pages/MyTechnicians';
 import Schedule from './pages/Schedule';
+import Branch from './pages/Branch';
 
 const BranchAdminRoutes = () => {
   return (
@@ -14,6 +15,7 @@ const BranchAdminRoutes = () => {
         <Route path="bookings" element={<Bookings />} />
         <Route path="technicians" element={<MyTechnicians />} />
         <Route path="schedule" element={<Schedule />} />
+        <Route path="branch" element={<Branch />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

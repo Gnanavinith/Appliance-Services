@@ -47,7 +47,8 @@ const Technicians = () => {
   const deleteTechnician = useMutation({
     mutationFn: async (id) => await axiosInstance.delete(`/technicians/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries(['technicians']);
+      queryClient.invalidateQueries({ queryKey: ['technicians'] });
+      queryClient.refetchQueries({ queryKey: ['technicians'] });
       toast.success('Technician deleted');
     },
   });

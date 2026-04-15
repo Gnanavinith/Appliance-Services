@@ -8,7 +8,11 @@ import {
   HiOutlinePhone,
   HiOutlineChatBubbleLeftRight,
   HiOutlineClipboardDocumentList,
-  HiOutlineCalendarDays
+  HiOutlineCalendarDays,
+  HiOutlineEnvelope,
+  HiOutlineWrenchScrewdriver,
+  HiOutlinePhoneArrowUpRight,
+  HiOutlineHome
 } from 'react-icons/hi2';
 import { formatCurrency, formatDate } from '../../../shared/utils/helpers';
 
@@ -169,10 +173,10 @@ const ConfirmationScreen = () => {
             <h3 className="font-bold text-slate-800 m-0 text-sm uppercase tracking-wider">Next Steps</h3>
           </div>
           <div className="px-6 py-6">
-            <TimelineStep done icon="✉️" title="Confirmation Processed" body="SMS details have been dispatched to your mobile." />
-            <TimelineStep done icon="🔧" title="Assigning Professional" body="A local expert will be assigned within the hour." />
-            <TimelineStep icon="📞" title="Contact Verification" body="Technician will call to verify site entry." />
-            <TimelineStep icon="🏠" title="On-site Fulfillment" body="Expert arrival scheduled for your chosen slot." last />
+            <TimelineStep done icon={<HiOutlineEnvelope className="text-xl" />} title="Confirmation Processed" body="SMS details have been dispatched to your mobile." />
+            <TimelineStep done icon={<HiOutlineWrenchScrewdriver className="text-xl" />} title="Assigning Professional" body="A local expert will be assigned within the hour." />
+            <TimelineStep icon={<HiOutlinePhone className="text-xl" />} title="Contact Verification" body="Technician will call to verify site entry." />
+            <TimelineStep icon={<HiOutlineHome className="text-xl" />} title="On-site Fulfillment" body="Expert arrival scheduled for your chosen slot." last />
           </div>
         </div>
 

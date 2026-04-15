@@ -67,12 +67,17 @@ const EditTechnician = () => {
       }
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['technicians']);
+      console.log('✅ Technician saved successfully:', data);
+      queryClient.invalidateQueries({ queryKey: ['technicians'] });
+      queryClient.refetchQueries({ queryKey: ['technicians'] });
       toast.success(isEditMode ? 'Technician updated successfully' : 'Technician created successfully');
-      navigate('/admin/technicians');
+      // Add a small delay before navigation to ensure data is saved
+      setTimeout(() => {
+        navigate('/admin/technicians');
+      }, 500);
     },
     onError: (error) => {
-      console.error('Save technician error:', error);
+      console.error('❌ Save technician error:', error);
       toast.error(error.response?.data?.message || 'Failed to save technician');
     },
   });

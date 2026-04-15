@@ -1,41 +1,56 @@
 import React, { useState } from 'react';
+import { HiOutlineChevronDown } from 'react-icons/hi2';
+
+/* ─── TAG ─── */
+const Tag = ({ children }) => (
+  <div className="inline-flex items-center gap-2 mb-5">
+    <div className="w-7 h-[2px] rounded-full bg-amber-500" />
+    <span style={{ fontSize: "10px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#d97706" }}>
+      {children}
+    </span>
+  </div>
+);
 
 const FAQItem = ({ question, answer, isOpen, onClick }) => {
   return (
-    <div className="border-b border-slate-200 last:border-0">
+    <div style={{ borderTop: "1px solid #efefef" }}>
       <button
         onClick={onClick}
-        className="w-full py-6 flex justify-between items-center text-left hover:bg-slate-50 transition-colors px-4 -mx-4"
+        className="w-full text-left bg-transparent border-none py-5 cursor-pointer outline-none"
       >
-        <span className="text-base font-semibold text-slate-900 pr-8">
-          {question}
-        </span>
-        <span
-          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
-            isOpen ? 'bg-emerald-500 text-white rotate-180' : 'bg-slate-100 text-slate-600'
-          }`}
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="flex items-center justify-between gap-4">
+          <span
+            className="text-sm font-medium transition-colors"
+            style={{ color: isOpen ? "#111" : "#555", fontFamily: "'DM Serif Display', serif", fontSize: "15px" }}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
+            {question}
+          </span>
+          <div
+            className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center border transition-all duration-300"
+            style={{
+              borderColor: isOpen ? "#111" : "#ddd",
+              background: isOpen ? "#111" : "transparent",
+            }}
+          >
+            <HiOutlineChevronDown
+              size={13}
+              style={{
+                color: isOpen ? "#fff" : "#888",
+                transform: isOpen ? "rotate(180deg)" : "none",
+                transition: "transform .35s",
+              }}
             />
-          </svg>
-        </span>
+          </div>
+        </div>
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 opacity-100 mb-6' : 'max-h-0 opacity-0'
-        }`}
+        style={{
+          overflow: "hidden",
+          maxHeight: isOpen ? "240px" : "0",
+          transition: "max-height .45s cubic-bezier(.22,1,.36,1)",
+        }}
       >
-        <p className="text-slate-600 leading-relaxed px-4">
+        <p className="pb-5" style={{ fontSize: "14px", lineHeight: 1.8, color: "#6b7280", maxWidth: "600px" }}>
           {answer}
         </p>
       </div>
@@ -90,45 +105,60 @@ const FAQSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-[800px] mx-auto px-6">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Frequently Asked Questions
-          </h2>
-          <p className="text-lg text-slate-500">
-            Got questions? We've got answers. Find what you need to know about our services.
-          </p>
-        </div>
+    <section className="py-[110px] px-4 md:px-8" style={{ background: "#f9fafb" }}>
+      <div className="max-w-[1100px] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-16 items-start">
 
-        {/* FAQ List */}
-        <div className="bg-white rounded-2xl">
-          {faqs.map((faq, index) => (
-            <FAQItem
-              key={index}
-              question={faq.question}
-              answer={faq.answer}
-              isOpen={index === openIndex}
-              onClick={() => setOpenIndex(index === openIndex ? -1 : index)}
-            />
-          ))}
-        </div>
+          {/* Left side - Sticky */}
+          <div className="lg:sticky lg:top-20">
+            <Tag>FAQ</Tag>
+            <h2 style={{ 
+              fontSize: 'clamp(30px, 3.8vw, 54px)', 
+              fontWeight: 700, 
+              lineHeight: 1.06, 
+              letterSpacing: '-0.03em', 
+              marginBottom: '24px', 
+              color: '#111', 
+              fontFamily: "'DM Serif Display', serif"
+            }}>
+              Questions?{" "}
+              <em style={{ fontStyle: 'italic', color: '#d97706' }}>We've got answers.</em>
+            </h2>
+            <p className="mb-8" style={{ fontSize: "15px", lineHeight: 1.8, color: "#6b7280" }}>
+              Find quick answers to common questions about our services, booking process, pricing, and warranty policies.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-9">
+              {["Free diagnosis", "30-day warranty", "Same-day service", "Verified technicians"].map((l, i) => (
+                <span key={i} className="inline-flex items-center gap-2 rounded-full py-2 px-4"
+                  style={{ fontSize: "11px", fontWeight: 500, background: "#f9fafb", border: "1px solid #f3f4f6", color: "#6b7280" }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                  {l}
+                </span>
+              ))}
+            </div>
+            <div className="hidden lg:block">
+              <img
+                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&q=85"
+                alt="Expert Technician"
+                className="w-full object-cover rounded-[20px]"
+                style={{ border: "1px solid #efefef", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}
+              />
+            </div>
+          </div>
 
-        {/* CTA */}
-        <div className="mt-12 text-center">
-          <p className="text-slate-600 mb-4">
-            Still have questions?
-          </p>
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors"
-          >
-            Contact our support team
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
+          {/* Right side - FAQ List */}
+          <div>
+            {faqs.map((faq, index) => (
+              <FAQItem
+                key={index}
+                question={faq.question}
+                answer={faq.answer}
+                isOpen={index === openIndex}
+                onClick={() => setOpenIndex(index === openIndex ? -1 : index)}
+              />
+            ))}
+            <div style={{ borderTop: "1px solid #efefef" }} />
+          </div>
         </div>
       </div>
     </section>

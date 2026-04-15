@@ -18,16 +18,17 @@ router.route('/')
   .get(protect, authorize('super-admin', 'branch-admin'), getAllTechnicians)
   .post(protect, authorize('super-admin'), createTechnician);
 
-router.route('/:id')
-  .get(protect, getTechnicianById)
-  .put(protect, authorize('super-admin'), updateTechnician)
-  .delete(protect, authorize('super-admin'), deleteTechnician);
-
-// Technician's own jobs routes
+// Technician's own jobs routes (MUST be before /:id route)
 router.route('/my-jobs')
   .get(protect, authorize('technician'), getMyJobs);
 
 router.route('/jobs/:bookingId/status')
   .patch(protect, authorize('technician'), updateJobStatus);
+
+// Parameterized routes (MUST be after specific routes)
+router.route('/:id')
+  .get(protect, getTechnicianById)
+  .put(protect, authorize('super-admin'), updateTechnician)
+  .delete(protect, authorize('super-admin'), deleteTechnician);
 
 export default router;

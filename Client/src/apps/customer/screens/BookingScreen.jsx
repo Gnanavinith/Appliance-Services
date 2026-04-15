@@ -31,20 +31,20 @@ const StepBar = ({ steps, current }) => (
           <div className="flex flex-col items-center">
             <div className={`
               w-8 h-8 md:w-10 md:h-10 rounded-full border-2 flex items-center justify-center mb-2 transition-all duration-300
-              ${done ? 'bg-emerald-600 border-emerald-600' : active ? 'bg-slate-900 border-slate-900' : 'bg-white border-slate-200'}
+              ${done ? 'bg-[#d97706] border-[#d97706]' : active ? 'bg-[#111] border-[#111]' : 'bg-white border-[#efefef]'}
             `}>
               {done ? (
                 <HiCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
               ) : (
-                <span className={`text-xs md:text-sm font-bold ${active ? 'text-white' : 'text-slate-400'}`}>{i + 1}</span>
+                <span className={`text-xs md:text-sm font-bold ${active ? 'text-white' : 'text-[#9ca3af]'}`}>{i + 1}</span>
               )}
             </div>
-            <span className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${active ? 'text-slate-900' : done ? 'text-emerald-600' : 'text-slate-400'}`}>
+            <span className={`text-[10px] md:text-[11px] font-bold uppercase tracking-wider ${active ? 'text-[#111]' : done ? 'text-[#d97706]' : 'text-[#9ca3af]'}`}>
               {s.title}
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className={`flex-1 h-[2px] mx-2 mb-6 transition-colors duration-300 ${i < current ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+            <div className={`flex-1 h-[2px] mx-2 mb-6 transition-colors duration-300 ${i < current ? 'bg-[#d97706]' : 'bg-[#efefef]'}`} />
           )}
         </React.Fragment>
       );
@@ -54,10 +54,10 @@ const StepBar = ({ steps, current }) => (
 
 const SectionHead = ({ icon, label }) => (
   <div className="flex items-center gap-3 mb-6">
-    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-700">
+    <div className="w-10 h-10 rounded-xl bg-[#fffbeb] flex items-center justify-center text-[#d97706]">
       {icon}
     </div>
-    <h2 className="text-xl font-bold text-slate-800 m-0 tracking-tight">{label}</h2>
+    <h2 className="text-xl font-bold text-[#111] m-0 tracking-tight" style={{ fontFamily: "'DM Serif Display', serif" }}>{label}</h2>
   </div>
 );
 
@@ -69,7 +69,7 @@ const TimeSlotPicker = ({ value, onChange }) => {
         <button
           key={slot} type="button" onClick={() => onChange(slot)}
           className={`py-3.5 px-4 rounded-xl border-2 text-sm font-semibold transition-all text-center
-            ${value === slot ? 'border-emerald-600 bg-emerald-50 text-emerald-800' : 'border-slate-100 bg-white text-slate-600 hover:border-emerald-200'}
+            ${value === slot ? 'border-[#d97706] bg-[#fffbeb] text-[#92400e]' : 'border-[#efefef] bg-white text-[#6b7280] hover:border-[#d97706]'}
           `}
         >
           {slot}
@@ -133,54 +133,54 @@ const BookingScreen = () => {
 
   if (!serviceId) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-slate-50 text-center">
-        <div className="w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center mb-4">
-          <HiOutlineShoppingBag className="w-10 h-10 text-slate-400" />
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white text-center">
+        <div className="w-20 h-20 rounded-full bg-[#f9fafb] flex items-center justify-center mb-4">
+          <HiOutlineShoppingBag className="w-10 h-10 text-[#9ca3af]" />
         </div>
-        <h1 className="text-2xl font-bold text-slate-800">No service selected</h1>
-        <p className="text-slate-500 mb-6">Please select a service from our catalog to continue.</p>
-        <button onClick={() => navigate('/')} className="px-8 py-3 bg-emerald-700 text-white rounded-xl font-bold border-none cursor-pointer">Browse Services</button>
+        <h1 className="text-2xl font-bold text-[#111] mb-2" style={{ fontFamily: "'DM Serif Display', serif" }}>No service selected</h1>
+        <p className="text-[#6b7280] mb-6">Please select a service from our catalog to continue.</p>
+        <button onClick={() => navigate('/')} className="px-8 py-3 bg-[#d97706] text-white rounded-full font-bold border-none cursor-pointer">Browse Services</button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#f9fafb]">
       {contextHolder}
       <style>{`
         .ant-input, .ant-select-selector, .ant-picker { 
-          border-radius: 12px !important; padding: 10px 15px !important; border: 1.5px solid #f1f5f9 !important; background: #f8fafc !important;
+          border-radius: 12px !important; padding: 10px 15px !important; border: 1.5px solid #efefef !important; background: #fff !important;
         }
-        .ant-input:focus, .ant-select-selector:focus { border-color: #059669 !important; background: #fff !important; }
-        .ant-form-item-label label { font-size: 12px !important; font-weight: 700 !important; color: #64748b !important; text-transform: uppercase; }
+        .ant-input:focus, .ant-select-selector:focus { border-color: #d97706 !important; background: #fff !important; }
+        .ant-form-item-label label { font-size: 12px !important; font-weight: 700 !important; color: #6b7280 !important; text-transform: uppercase; }
       `}</style>
 
       {/* Header Section */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-[#efefef] sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <button onClick={() => currentStep === 0 ? navigate('/') : setCurrentStep(s => s-1)} className="p-2 -ml-2 text-slate-500 bg-transparent border-none cursor-pointer">
+          <button onClick={() => currentStep === 0 ? navigate('/') : setCurrentStep(s => s-1)} className="p-2 -ml-2 text-[#6b7280] bg-transparent border-none cursor-pointer">
             <HiOutlineArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-black text-slate-800 m-0">Book Service</h1>
+          <h1 className="text-lg font-black text-[#111] m-0" style={{ fontFamily: "'DM Serif Display', serif" }}>Book Service</h1>
           <div className="w-10" /> {/* Spacer */}
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6">
         {/* Service Summary Chip */}
-        <div className="bg-emerald-700 rounded-2xl p-5 mb-8 text-white shadow-lg shadow-emerald-900/20 flex justify-between items-center">
+        <div className="bg-[#111] rounded-[20px] p-5 mb-8 text-white flex justify-between items-center">
           <div>
-            <p className="text-emerald-200 text-[10px] font-black uppercase tracking-widest mb-1">Selected Plan</p>
-            <h3 className="text-xl font-bold m-0">{selectedService.name}</h3>
+            <p className="text-white/60 text-[10px] font-black uppercase tracking-widest mb-1">Selected Plan</p>
+            <h3 className="text-xl font-bold m-0" style={{ fontFamily: "'DM Serif Display', serif" }}>{selectedService.name}</h3>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-black m-0">₹{selectedService.price}</p>
+            <p className="text-2xl font-black m-0" style={{ fontFamily: "'DM Serif Display', serif" }}>₹{selectedService.price}</p>
           </div>
         </div>
 
         <StepBar steps={steps} current={currentStep} />
 
-        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
+        <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#efefef]">
           <Form form={form} layout="vertical" requiredMark={false} className="mb-0">
             
             {currentStep === 0 && (
@@ -206,7 +206,17 @@ const BookingScreen = () => {
                 </div>
                 <div className="p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
                     <p className="text-[11px] font-bold text-slate-400 uppercase mb-3">Precision Pinning</p>
-                    <MapPicker onLocationSelect={(c) => { form.setFieldsValue({ lat: c.lat, lng: c.lng }); success('Pinned!'); }} />
+                    <MapPicker onLocationSelect={(c) => { 
+                      form.setFieldsValue({ 
+                        lat: c.lat, 
+                        lng: c.lng,
+                        address: c.houseFlatStreet || c.address || form.getFieldValue('address'),
+                        city: c.city || form.getFieldValue('city'),
+                        pincode: c.pincode || form.getFieldValue('pincode')
+                      }); 
+                      if (c.address) success('Location pinned & address detected!'); 
+                      else success('Location pinned!'); 
+                    }} />
                 </div>
               </div>
             )}
@@ -237,24 +247,24 @@ const BookingScreen = () => {
           </Form>
 
           {/* Navigation Controls */}
-          <div className="mt-10 pt-6 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+          <div className="mt-10 pt-6 border-t border-[#efefef] flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => currentStep === 0 ? navigate('/') : setCurrentStep(s => s-1)}
-              className="flex-1 py-4 rounded-xl font-bold text-slate-600 bg-slate-50 border-none cursor-pointer hover:bg-slate-100 transition-colors order-2 sm:order-1"
+              className="flex-1 py-4 rounded-full font-bold text-[#6b7280] bg-[#f9fafb] border-none cursor-pointer hover:bg-[#efefef] transition-colors order-2 sm:order-1"
             >
               {currentStep === 0 ? 'Cancel Booking' : 'Previous Step'}
             </button>
             {currentStep < steps.length - 1 ? (
               <button
                 onClick={handleNext}
-                className="flex-[2] py-4 rounded-xl font-bold text-white bg-emerald-700 border-none cursor-pointer hover:bg-emerald-800 shadow-lg shadow-emerald-200 transition-all active:scale-95 order-1 sm:order-2"
+                className="flex-[2] py-4 rounded-full font-bold text-white bg-[#d97706] border-none cursor-pointer hover:bg-[#b45309] transition-all active:scale-95 order-1 sm:order-2"
               >
                 Continue to {steps[currentStep+1].title}
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
-                className="flex-[2] py-4 rounded-xl font-bold text-white bg-emerald-700 border-none cursor-pointer hover:bg-emerald-800 shadow-lg shadow-emerald-200 transition-all active:scale-95 order-1 sm:order-2"
+                className="flex-[2] py-4 rounded-full font-bold text-white bg-[#d97706] border-none cursor-pointer hover:bg-[#b45309] transition-all active:scale-95 order-1 sm:order-2"
               >
                 Confirm & Pay
               </button>

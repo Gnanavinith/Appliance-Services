@@ -80,6 +80,7 @@ const Sidebar = ({ menuItems, collapsed, setCollapsed }) => {
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '1px 0 0 #f0f0f0',
+        zIndex: 100,
       }}
     >
       <Logo collapsed={collapsed} />

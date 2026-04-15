@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Booking from '../models/Booking.js';
 import Branch from '../models/Branch.js';
+import Notification from '../models/Notification.js';
 
 // @desc    Get all technicians
 // @route   GET /api/technicians
@@ -195,12 +196,42 @@ export const updateJobStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid status' });
     }
 
-    const booking = await Booking.findOne({ _id: req.params.bookingId, technician: req.user.id });
+    const booking = await Booking.findOne({ _id: req.params.bookingId, technician: req.user.id })
+      .populate('customer', 'name email')
+      .populate('service', 'name');
+    
     if (!booking) return res.status(404).json({ success: false, message: 'Job not found' });
 
     booking.status = status;
     if (status === 'completed') booking.paymentStatus = 'paid';
     await booking.save();
+
+    // Create notification for customer
+    let notificationTitle, notificationMessage;
+    const serviceName = booking.service?.name || 'appliance service';
+    const technicianName = req.user.name || 'Technician';
+    
+    if (status === 'in-progress') {
+      notificationTitle = 'Technician Started Your Job';
+      notificationMessage = `Good news! ${technicianName} has started working on your ${serviceName}. They are on their way or already at your location.`;
+    } else if (status === 'completed') {
+      notificationTitle = 'Service Completed';
+      notificationMessage = `Your ${serviceName} has been completed successfully by ${technicianName}. Thank you for using our service!`;
+    }
+
+    // Only create notification if customer exists
+    if (booking.customer?._id) {
+      await Notification.create({
+        recipient: booking.customer._id,
+        title: notificationTitle,
+        message: notificationMessage,
+        type: 'technician',
+        booking: booking._id,
+        actionUrl: `/customer/bookings/${booking._id}`,
+      });
+    } else {
+      console.warn('⚠️ No customer found for booking:', booking._id);
+    }
 
     const updatedBooking = await Booking.findById(booking._id)
       .populate('customer', 'name phone')

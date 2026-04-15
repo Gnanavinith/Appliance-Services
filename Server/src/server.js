@@ -10,6 +10,7 @@ import serviceRoutes from '../routes/serviceRoutes.js';
 import bookingRoutes from '../routes/bookingRoutes.js';
 import branchRoutes from '../routes/branchRoutes.js';
 import technicianRoutes from '../routes/technicianRoutes.js';
+import notificationRoutes from '../routes/notificationRoutes.js';
 
 // Load env vars
 dotenv.config();
@@ -31,6 +32,7 @@ app.use('/api/services', serviceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/branches', branchRoutes);
 app.use('/api/technicians', technicianRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

@@ -29,8 +29,10 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const response = await branchesApi.getBranches({ limit: 100 });
+      console.log('📊 Dashboard branches response:', response);
       if (response.success) {
         const data = response.data;
+        console.log('📊 Branches data:', data);
         setBranches(data);
         setStats({
           totalBranches: data.length,
@@ -40,28 +42,29 @@ const Dashboard = () => {
         });
       }
     } catch (error) {
-      toast.showError('Failed to load analytical data');
+      console.error('❌ Failed to load dashboard data:', error);
+      toast.error('Failed to load analytical data', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   // --- Data Transformations for Charts ---
-  const revenueData = branches.slice(0, 6).map(b => ({
+  const revenueData = branches.length > 0 ? branches.slice(0, 6).map(b => ({
     name: b.name.split(' ')[0],
     revenue: b.revenue || 0,
     bookings: b.totalBookings || 0
-  }));
+  })) : [{ name: 'No Data', revenue: 0, bookings: 0 }];
 
   const statusData = [
-    { name: 'Active', value: stats.activeBranches, color: '#10b981' },
-    { name: 'Inactive', value: stats.totalBranches - stats.activeBranches, color: '#94a3b8' },
+    { name: 'Active', value: stats.activeBranches || 0, color: '#10b981' },
+    { name: 'Inactive', value: (stats.totalBranches - stats.activeBranches) || 0, color: '#94a3b8' },
   ];
 
   // Mocking a growth trend based on existing totals
   const trendData = [
     { month: 'Jan', val: 400 }, { month: 'Feb', val: 700 },
-    { month: 'Mar', val: 1200 }, { month: 'Apr', val: stats.totalBookings },
+    { month: 'Mar', val: 1200 }, { month: 'Apr', val: stats.totalBookings || 1500 },
   ];
 
   if (loading) return (
@@ -112,7 +115,7 @@ const Dashboard = () => {
               <FaChartLine className="text-slate-400" /> Revenue by Branch
             </h3>
           </div>
-          <div className="h-[300px] w-full">
+          <div style={{ height: '300px', width: '100%', minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -131,7 +134,7 @@ const Dashboard = () => {
         {/* Status Distribution (Pie) */}
         <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col">
           <h3 className="font-bold text-slate-800 mb-8">Operational Status</h3>
-          <div className="h-[240px] w-full">
+          <div style={{ height: '240px', width: '100%', minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -163,7 +166,7 @@ const Dashboard = () => {
           <h3 className="font-bold text-slate-800 mb-8 flex items-center gap-2">
             <FaHistory className="text-slate-400" /> Bookings Growth
           </h3>
-          <div className="h-[250px] w-full">
+          <div style={{ height: '250px', width: '100%', minWidth: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={trendData}>
                 <defs>

@@ -90,7 +90,7 @@ export const createBooking = async (req, res) => {
       timeSlot,
       notes,
       price: service.price,
-      paymentMethod: paymentMethod || 'cash',
+      paymentMethod: ['online', 'cash'].includes(paymentMethod) ? paymentMethod : 'cash', // Default to cash if invalid
     });
 
     // Populate service and customer details
@@ -106,7 +106,9 @@ export const createBooking = async (req, res) => {
   } catch (error) {
     console.error('❌ [BACKEND] Create booking error:', error);
     console.error('❌ [BACKEND] Error details:', error.message);
-    console.error('❌ [BACKEND] Stack trace:', error.stack);
+    console.error('❌ [BACKEND] Error stack:', error.stack);
+    console.error('❌ [BACKEND] Request body:', req.body);
+    console.error('❌ [BACKEND] User:', req.user);
     res.status(500).json({
       success: false,
       message: 'Server error while creating booking',

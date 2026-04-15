@@ -6,7 +6,6 @@ import { ConfigProvider } from 'antd';
 import { store } from './store';
 import { queryClient } from './queries/queryClient';
 import AppRouter from './router/AppRouter';
-import './index.css';
 import './styles/globals.css';
 
 function App() {

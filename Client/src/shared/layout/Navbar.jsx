@@ -1,47 +1,168 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
+import { 
+  HiOutlineBell, 
+  HiOutlineCalendar, 
+  HiOutlineBars3,
+  HiOutlineXMark,
+  HiOutlineUser,
+  HiOutlineHome,
+  HiOutlineArrowRight,
+  HiOutlineChevronDown,
+  HiOutlineBriefcase,
+  HiOutlineCog,
+  HiOutlineLifebuoy,
+  HiOutlineSparkles,
+  HiOutlineArrowRightOnRectangle
+} from 'react-icons/hi2';
+
+const FONT_URL =
+  'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap';
 
 const NAV_LINKS = [
   { label: 'Services', href: '#services' },
   { label: 'How it works', href: '#how-it-works' },
-  { label: 'Pricing', href: '#pricing' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Support', href: '#contact' },
 ];
+
+const GLOBAL_CSS = `
+  @keyframes nv-drop {
+    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes nv-mobile-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .nv-desktop-links { display: none !important; }
+  .nv-bell { display: none !important; }
+  .nv-book-btn { display: none !important; }
+  .nv-username { display: none !important; }
+  .nv-cta-btn { display: none !important; }
+  .nv-hamburger { display: flex !important; }
+
+  @media (min-width: 640px) { .nv-cta-btn { display: inline-flex !important; } }
+  @media (min-width: 768px) { .nv-bell { display: flex !important; } .nv-book-btn { display: inline-flex !important; } .nv-username { display: block !important; } }
+  @media (min-width: 1024px) { .nv-desktop-links { display: flex !important; } .nv-hamburger { display: none !important; } }
+`;
+
+const iconBtnStyle = {
+  width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  background: '#f4f4f5', border: '1px solid #e4e4e7',
+  color: '#52525b', cursor: 'pointer', transition: 'all .2s',
+  position: 'relative',
+};
+
+const ctaBtnStyle = {
+  display: 'inline-flex', alignItems: 'center', gap: 8,
+  padding: '0 20px', height: 38, borderRadius: 999,
+  fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700,
+  color: '#fff', background: '#0f172a',
+  border: '1px solid transparent', cursor: 'pointer', transition: 'all .2s',
+  whiteSpace: 'nowrap', letterSpacing: '0.01em',
+};
+
+const loginBtnStyle = {
+  display: 'inline-flex', alignItems: 'center', gap: 6,
+  padding: '0 20px', height: 38, borderRadius: 999,
+  fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+  color: '#3f3f46', background: 'transparent',
+  border: '1px solid #d4d4d8', cursor: 'pointer', transition: 'all .2s',
+  whiteSpace: 'nowrap',
+};
+
+const profileBtnStyle = {
+  display: 'flex', alignItems: 'center', gap: 8,
+  padding: '4px 12px 4px 4px', borderRadius: 12,
+  background: '#f4f4f5', border: '1px solid #e4e4e7',
+  cursor: 'pointer', transition: 'all .2s',
+};
+
+function Avatar({ initials, size, radius }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: radius,
+      background: 'linear-gradient(135deg, #f97316, #ea580c)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontFamily: "'Syne', sans-serif",
+      fontSize: size * 0.35, fontWeight: 700, color: '#fff', flexShrink: 0,
+    }}>
+      {initials}
+    </div>
+  );
+}
+
+function NavLink({ label, href }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a href={href} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '7px 16px', borderRadius: 999,
+      fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 500,
+      color: hov ? '#0f172a' : '#52525b',
+      background: hov ? '#f4f4f5' : 'transparent',
+      textDecoration: 'none', transition: 'all .2s', whiteSpace: 'nowrap',
+    }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {label}
+    </a>
+  );
+}
+
+function DropItem({ icon: Icon, label, onClick, danger }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button onClick={onClick} style={{
+      display: 'flex', alignItems: 'center', gap: 12,
+      padding: '10px 14px', width: '100%', textAlign: 'left',
+      fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 500,
+      color: danger ? (hov ? '#dc2626' : '#ef4444') : (hov ? '#0f172a' : '#52525b'),
+      background: hov ? (danger ? '#fef2f2' : '#f4f4f5') : 'transparent',
+      border: 'none', cursor: 'pointer', transition: 'all .15s',
+    }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {Icon && <Icon size={16} style={{ color: danger ? '#ef4444' : '#a1a1aa' }} />}
+      {label}
+    </button>
+  );
+}
 
 export default function Navbar({ onLoginClick, onSignupClick }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
-  
+  const { isAuthenticated, user } = useSelector((s) => s.auth);
+
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false); // Mobile menu
-  const [profileOpen, setProfileOpen] = useState(false); // Profile dropdown
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const fn = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
         setProfileOpen(false);
-      }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
   }, []);
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 24);
+    const fn = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logout());
-    setProfileOpen(false);
-    navigate('/');
-  };
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+
+  const handleLogout = () => { dispatch(logout()); setProfileOpen(false); navigate('/'); };
 
   const initials = user?.name
     ? user.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -49,167 +170,360 @@ export default function Navbar({ onLoginClick, onSignupClick }) {
 
   return (
     <>
-      <nav className={`
-        fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 ease-in-out
-        ${scrolled 
-          ? 'bg-white shadow-md py-3 px-6' 
-          : 'bg-white/95 backdrop-blur-sm shadow-sm py-4 px-6'}
-      `}>
-        <div className="max-w-[1200px] mx-auto flex justify-between items-center">
-          
-          {/* Logo */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link href={FONT_URL} rel="stylesheet" />
+      <style>{GLOBAL_CSS}</style>
+
+      {/* Announcement bar */}
+      <div style={{
+        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
+        padding: '8px 20px',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: 0,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+        }}>
+          <HiOutlineSparkles size={14} color="#fbbf24" />
+          New customers get{' '}
+          <button onClick={onSignupClick} style={{
+            background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+            fontWeight: 700, color: '#fbbf24', fontFamily: 'inherit', fontSize: 'inherit',
+            textDecoration: 'underline', textDecorationColor: 'rgba(251,191,36,0.5)',
+          }}>
+            ₹150 off
+          </button>
+          {' '}first booking — verified technicians · fixed pricing · 30-day warranty
+        </p>
+      </div>
+
+      {/* Main navbar */}
+      <nav style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 999,
+        background: scrolled ? 'rgba(255,255,255,0.98)' : '#ffffff',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${scrolled ? '#e4e4e7' : '#f0f0f0'}`,
+        boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.06)' : 'none',
+        transition: 'box-shadow .3s, border-color .3s',
+        fontFamily: "'Inter', sans-serif",
+      }}>
+        <div style={{
+          maxWidth: 1200, margin: '0 auto',
+          padding: '0 24px', height: 66,
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', gap: 16,
+        }}>
+
+          {/* Professional Logo */}
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 bg-transparent border-none cursor-pointer p-0"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
+            }}
           >
-            <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-              </svg>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: 'linear-gradient(135deg, #f97316, #ea580c)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <HiOutlineBriefcase size={18} color="#fff" />
             </div>
-            <span className="text-2xl font-bold text-slate-800 tracking-tight">FixIt</span>
+            <div style={{ lineHeight: 1 }}>
+              <div style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: 20, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em',
+              }}>
+                Fix<span style={{ color: '#f97316' }}>Pro</span>
+              </div>
+              <div style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: '#64748b', marginTop: 2,
+              }}>
+                Service Solutions
+              </div>
+            </div>
           </button>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex gap-2 items-center">
+          {/* Desktop nav links */}
+          <div className="nv-desktop-links" style={{
+            flex: 1, justifyContent: 'center', alignItems: 'center', gap: 4,
+          }}>
             {NAV_LINKS.map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 transition-all duration-200 no-underline"
-              >
-                {label}
-              </a>
+              <NavLink key={label} label={label} href={href} />
             ))}
           </div>
 
-          {/* Desktop Auth Section */}
-          <div className="hidden md:flex items-center gap-4">
+          {/* Right section */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+
             {isAuthenticated ? (
-              <div className="relative" ref={dropdownRef}>
-                {/* Profile Toggle Pill */}
-                <button
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center gap-3 pl-1.5 pr-4 py-1.5 rounded-full bg-slate-50 border border-slate-200 hover:border-emerald-300 hover:bg-white transition-all cursor-pointer group"
+              <>
+                {/* Bell notification */}
+                <button className="nv-bell" style={iconBtnStyle}
+                  aria-label="Notifications"
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, { background: '#e4e4e7', color: '#0f172a' })}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, { background: '#f4f4f5', color: '#52525b' })}
                 >
-                  <div className="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs font-bold shadow-sm group-hover:scale-105 transition-transform">
-                    {initials}
-                  </div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-slate-700 leading-tight">Account</p>
-                    <p className="text-[10px] text-slate-400 font-medium">Manage Profile</p>
-                  </div>
-                  <svg 
-                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`} 
-                    fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <span style={{
+                    position: 'absolute', top: 8, right: 8,
+                    width: 8, height: 8, borderRadius: '50%',
+                    background: '#f97316', border: '2px solid #fff',
+                  }} />
+                  <HiOutlineBell size={18} />
                 </button>
 
-                {/* Profile Dropdown Menu */}
-                {profileOpen && (
-                  <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden animate-in fade-in zoom-in duration-150 origin-top-right">
-                    {/* User Header */}
-                    <div className="px-5 py-4 bg-slate-50/50 border-b border-slate-100">
-                      <p className="text-sm font-bold text-slate-800 truncate">{user?.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{user?.email || 'customer@fixit.com'}</p>
-                      <div className="mt-2 inline-block px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-wider">
-                        {user?.role || 'Customer'}
+                {/* Book Now */}
+                <button className="nv-book-btn" style={ctaBtnStyle}
+                  onClick={() => navigate('/dashboard/book')}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#1e293b'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#0f172a'; e.currentTarget.style.transform = 'scale(1)'; }}
+                >
+                  <HiOutlineCalendar size={16} />
+                  Book Now
+                </button>
+
+                {/* Profile dropdown */}
+                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                  <button
+                    style={profileBtnStyle}
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    onMouseEnter={e => e.currentTarget.style.background = '#e4e4e7'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#f4f4f5'}
+                  >
+                    <Avatar initials={initials} size={30} radius="50%" />
+                    <span className="nv-username" style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: 13, fontWeight: 600, color: '#0f172a',
+                    }}>
+                      {user?.name?.split(' ')[0]}
+                    </span>
+                    <HiOutlineChevronDown size={12} style={{ color: '#a1a1aa', transition: 'transform .22s ease', transform: profileOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+                  </button>
+
+                  {profileOpen && (
+                    <div style={{
+                      position: 'absolute', right: 0, top: 'calc(100% + 8px)',
+                      width: 280, borderRadius: 16, overflow: 'hidden',
+                      background: '#ffffff',
+                      border: '1px solid #e4e4e7',
+                      boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+                      animation: 'nv-drop .22s cubic-bezier(.16,1,.3,1)',
+                      zIndex: 100,
+                    }}>
+                      {/* Header */}
+                      <div style={{
+                        padding: '16px', display: 'flex', alignItems: 'center', gap: 12,
+                        background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
+                        borderBottom: '1px solid #e4e4e7',
+                      }}>
+                        <Avatar initials={initials} size={44} radius="50%" />
+                        <div>
+                          <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                            {user?.name}
+                          </p>
+                          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: '#94a3b8', margin: '3px 0 0' }}>
+                            {user?.email}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div style={{
+                        display: 'grid', gridTemplateColumns: 'repeat(3,1fr)',
+                        borderBottom: '1px solid #f1f5f9',
+                        background: '#fafafa',
+                      }}>
+                        {[{ val: '3', lbl: 'Active' }, { val: '12', lbl: 'Done' }, { val: '4.8', lbl: 'Rating' }].map((s, i) => (
+                          <div key={s.lbl} style={{
+                            padding: '12px 0', textAlign: 'center',
+                            borderRight: i < 2 ? '1px solid #f1f5f9' : 'none',
+                          }}>
+                            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, color: '#f97316' }}>{s.val}</div>
+                            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 2 }}>{s.lbl}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Menu items */}
+                      <div style={{ padding: '6px 0' }}>
+                        <DropItem icon={HiOutlineHome} label="Dashboard" onClick={() => { navigate('/dashboard'); setProfileOpen(false); }} />
+                        <DropItem icon={HiOutlineCalendar} label="My Bookings" onClick={() => { navigate('/dashboard/bookings'); setProfileOpen(false); }} />
+                        <DropItem icon={HiOutlineUser} label="Profile" onClick={() => { navigate('/dashboard/profile'); setProfileOpen(false); }} />
+                        <DropItem icon={HiOutlineCog} label="Settings" onClick={() => { navigate('/dashboard/settings'); setProfileOpen(false); }} />
+                      </div>
+
+                      <div style={{ borderTop: '1px solid #f1f5f9', padding: '6px 0' }}>
+                        <DropItem icon={HiOutlineArrowRightOnRectangle} label="Sign out" danger onClick={handleLogout} />
                       </div>
                     </div>
-
-                    {/* Menu Items */}
-                    <div className="p-2">
-                      <button 
-                        onClick={() => { navigate('/profile'); setProfileOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-none bg-transparent cursor-pointer"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                        Personal Details
-                      </button>
-                      <button 
-                         onClick={() => { navigate('/bookings'); setProfileOpen(false); }}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors border-none bg-transparent cursor-pointer"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                        My Bookings
-                      </button>
-                    </div>
-
-                    {/* Logout Section */}
-                    <div className="p-2 border-t border-slate-100 bg-slate-50/30">
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-colors border-none bg-transparent cursor-pointer"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              </>
             ) : (
               <>
-                <button
-                  onClick={onLoginClick}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-transparent border-none cursor-pointer hover:text-emerald-700 transition-all"
+                <button style={loginBtnStyle} onClick={onLoginClick}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.borderColor = '#d4d4d8'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#3f3f46'; e.currentTarget.style.borderColor = '#d4d4d8'; }}
                 >
+                  <HiOutlineUser size={14} />
                   Log in
                 </button>
-                <button
-                  onClick={onSignupClick}
-                  className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-emerald-700 border-none cursor-pointer shadow-lg shadow-emerald-200/50 hover:bg-emerald-800 hover:-translate-y-0.5 active:scale-95 transition-all"
+
+                <button className="nv-cta-btn" style={ctaBtnStyle} onClick={onSignupClick}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#1e293b'; e.currentTarget.style.transform = 'scale(1.02)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#0f172a'; e.currentTarget.style.transform = 'scale(1)'; }}
                 >
-                  Join Now
+                  Get Started
+                  <HiOutlineArrowRight size={14} />
                 </button>
               </>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600"
-          >
-            {menuOpen ? (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            ) : (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            )}
-          </button>
+            {/* Hamburger */}
+            <button className="nv-hamburger" style={iconBtnStyle}
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#52525b'; }}
+            >
+              {menuOpen ? <HiOutlineXMark size={20} /> : <HiOutlineBars3 size={20} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Dropdown */}
+        {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t border-slate-100 flex flex-col gap-2">
-            {NAV_LINKS.map(({ label, href }) => (
-              <a key={label} href={href} className="px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-slate-50 no-underline transition-colors">{label}</a>
-            ))}
-            <div className="h-px bg-slate-100 my-2" />
-            {isAuthenticated ? (
-              <div className="flex flex-col gap-2 p-2 bg-slate-50 rounded-2xl">
-                <div className="px-4 py-2">
-                  <p className="text-sm font-bold text-slate-800">{user?.name}</p>
-                  <p className="text-xs text-slate-500">{user?.email}</p>
+          <div style={{
+            borderTop: '1px solid #f1f5f9',
+            background: '#ffffff',
+            animation: 'nv-mobile-in .2s ease-out',
+          }}>
+            {/* Nav links */}
+            <div style={{ borderBottom: '1px solid #f1f5f9' }}>
+              {NAV_LINKS.map(({ label, href }) => (
+                <a key={label} href={href} onClick={() => setMenuOpen(false)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '14px 24px', textDecoration: 'none',
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 14, fontWeight: 500, color: '#52525b',
+                    transition: 'all .15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f8fafc'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#52525b'; e.currentTarget.style.background = 'transparent'; }}
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+
+            <div style={{ padding: 16 }}>
+              {isAuthenticated ? (
+                <>
+                  {/* User card */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '12px 14px', borderRadius: 14, marginBottom: 12,
+                    background: '#fff7ed', border: '1px solid #fed7aa',
+                  }}>
+                    <Avatar initials={initials} size={44} radius="50%" />
+                    <div>
+                      <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>{user?.name}</p>
+                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: '#94a3b8', margin: '3px 0 0' }}>{user?.role || 'Member'}</p>
+                    </div>
+                  </div>
+
+                  <button style={{ ...ctaBtnStyle, width: '100%', justifyContent: 'center', height: 44, marginBottom: 12, borderRadius: 12 }}
+                    onClick={() => { navigate('/dashboard/book'); setMenuOpen(false); }}>
+                    <HiOutlineCalendar size={16} />
+                    Book a Service
+                  </button>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <button
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '11px 14px', borderRadius: 12, width: '100%',
+                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+                        color: '#3f3f46', background: '#f4f4f5',
+                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
+                      }}
+                      onClick={() => { navigate('/dashboard'); setMenuOpen(false); }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
+                    >
+                      <HiOutlineHome size={16} />
+                      Dashboard
+                    </button>
+                    <button
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '11px 14px', borderRadius: 12, width: '100%',
+                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+                        color: '#3f3f46', background: '#f4f4f5',
+                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
+                      }}
+                      onClick={() => { navigate('/dashboard/bookings'); setMenuOpen(false); }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
+                    >
+                      <HiOutlineCalendar size={16} />
+                      Bookings
+                    </button>
+                    <button
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '11px 14px', borderRadius: 12, width: '100%',
+                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+                        color: '#3f3f46', background: '#f4f4f5',
+                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
+                      }}
+                      onClick={() => { navigate('/dashboard/profile'); setMenuOpen(false); }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
+                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
+                    >
+                      <HiOutlineUser size={16} />
+                      Profile
+                    </button>
+                    <button
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '11px 14px', borderRadius: 12, width: '100%',
+                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
+                        color: '#ef4444', background: '#fef2f2',
+                        border: '1px solid #fecaca', cursor: 'pointer', transition: 'all .15s',
+                      }}
+                      onClick={handleLogout}
+                      onMouseEnter={e => e.currentTarget.style.background = '#fee2e2'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#fef2f2'}
+                    >
+                      <HiOutlineArrowRightOnRectangle size={16} />
+                      Logout
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button style={{ ...loginBtnStyle, height: 46, justifyContent: 'center', borderRadius: 12 }} onClick={onLoginClick}>
+                    <HiOutlineUser size={14} />
+                    Log in
+                  </button>
+                  <button style={{ ...ctaBtnStyle, height: 46, justifyContent: 'center', borderRadius: 12 }} onClick={onSignupClick}>
+                    Sign Up
+                    <HiOutlineArrowRight size={14} />
+                  </button>
                 </div>
-                <button onClick={() => navigate('/profile')} className="w-full py-3 rounded-xl bg-emerald-700 text-white font-bold border-none">Personal Details</button>
-                <button onClick={() => navigate('/bookings')} className="w-full py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold">My Bookings</button>
-                <button onClick={handleLogout} className="w-full py-3 rounded-xl bg-white text-red-600 font-bold border border-red-100">Logout</button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 px-2">
-                <button onClick={onLoginClick} className="py-3 rounded-xl bg-white border border-slate-200 text-slate-600 font-bold">Login</button>
-                <button onClick={onSignupClick} className="py-3 rounded-xl bg-emerald-700 text-white font-bold">Join</button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </nav>
-
-      {/* Dynamic Spacer */}
-      <div className={`transition-all duration-300 ${scrolled ? 'h-[64px]' : 'h-[76px]'}`} />
     </>
   );
 }

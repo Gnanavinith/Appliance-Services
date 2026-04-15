@@ -74,7 +74,7 @@ const EditBranch = () => {
       }
     } catch (error) {
       console.error('❌ Fetch branch error:', error);
-      toast.showError(error.message || 'Failed to load branch details');
+      toast.error(error.message || 'Failed to load branch details');
       navigate('/admin/branches');
     } finally {
       setLoading(false);
@@ -112,15 +112,15 @@ const EditBranch = () => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      toast.showError('Branch name is required');
+      toast.error('Branch name is required');
       return;
     }
     if (!formData.phone.trim()) {
-      toast.showError('Phone number is required');
+      toast.error('Phone number is required');
       return;
     }
     if (formData.manager.email && formData.manager.password && formData.manager.password.length < 6) {
-      toast.showError('Manager password must be at least 6 characters');
+      toast.error('Manager password must be at least 6 characters');
       return;
     }
 
@@ -136,12 +136,12 @@ const EditBranch = () => {
       const response = await branchesApi.updateBranch(id, updateData);
       
       if (response.success) {
-        toast.showSuccess('Branch updated successfully');
+        toast.success('Branch updated successfully');
         navigate('/admin/branches');
       }
     } catch (error) {
       console.error('❌ Update branch error:', error);
-      toast.showError(error.message || 'Failed to update branch');
+      toast.error(error.message || 'Failed to update branch');
     } finally {
       setSaving(false);
     }

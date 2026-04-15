@@ -90,7 +90,7 @@ const seedDatabase = async () => {
         name: 'Branch Admin',
         email: 'branch@test.com',
         phone: '9876543211',
-        password: 'branch123',
+        password: ' ',
         role: 'branch-admin',
         isVerified: true,
       },
