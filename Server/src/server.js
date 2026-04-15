@@ -21,7 +21,20 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+// CORS configuration for production
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'https://appliancesbookingdemo.netlify.app',
+    process.env.FRONTEND_URL // Add this to your .env on Render
+  ].filter(Boolean),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -40,6 +53,32 @@ app.get('/api/health', (req, res) => {
     success: true, 
     message: 'Server is running',
     timestamp: new Date().toISOString()
+  });
+});
+
+// Root route for testing
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Appliance Management API is running',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      services: '/api/services',
+      bookings: '/api/bookings',
+      branches: '/api/branches',
+      technicians: '/api/technicians',
+      notifications: '/api/notifications',
+      health: '/api/health'
+    }
+  });
+});
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.method} ${req.path} not found`
   });
 });
 
