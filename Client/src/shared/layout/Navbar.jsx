@@ -2,24 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../store/slices/authSlice';
-import { 
-  HiOutlineBell, 
-  HiOutlineCalendar, 
-  HiOutlineBars3,
-  HiOutlineXMark,
-  HiOutlineUser,
-  HiOutlineHome,
-  HiOutlineArrowRight,
-  HiOutlineChevronDown,
-  HiOutlineBriefcase,
-  HiOutlineCog,
-  HiOutlineLifebuoy,
-  HiOutlineSparkles,
-  HiOutlineArrowRightOnRectangle
+import {
+  HiOutlineBell, HiOutlineCalendar, HiOutlineBars3, HiOutlineXMark,
+  HiOutlineUser, HiOutlineHome, HiOutlineArrowRight, HiOutlineChevronDown,
+  HiOutlineBriefcase, HiOutlineCog, HiOutlineSparkles,
+  HiOutlineArrowRightOnRectangle,
 } from 'react-icons/hi2';
-
-const FONT_URL =
-  'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@400;500;600&display=swap';
 
 const NAV_LINKS = [
   { label: 'Services', href: '#services' },
@@ -27,108 +15,30 @@ const NAV_LINKS = [
   { label: 'Support', href: '#contact' },
 ];
 
-const GLOBAL_CSS = `
-  @keyframes nv-drop {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes nv-mobile-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .nv-desktop-links { display: none !important; }
-  .nv-bell { display: none !important; }
-  .nv-book-btn { display: none !important; }
-  .nv-username { display: none !important; }
-  .nv-cta-btn { display: none !important; }
-  .nv-hamburger { display: flex !important; }
-
-  @media (min-width: 640px) { .nv-cta-btn { display: inline-flex !important; } }
-  @media (min-width: 768px) { .nv-bell { display: flex !important; } .nv-book-btn { display: inline-flex !important; } .nv-username { display: block !important; } }
-  @media (min-width: 1024px) { .nv-desktop-links { display: flex !important; } .nv-hamburger { display: none !important; } }
-`;
-
-const iconBtnStyle = {
-  width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  background: '#f4f4f5', border: '1px solid #e4e4e7',
-  color: '#52525b', cursor: 'pointer', transition: 'all .2s',
-  position: 'relative',
-};
-
-const ctaBtnStyle = {
-  display: 'inline-flex', alignItems: 'center', gap: 8,
-  padding: '0 20px', height: 38, borderRadius: 999,
-  fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 700,
-  color: '#fff', background: '#0f172a',
-  border: '1px solid transparent', cursor: 'pointer', transition: 'all .2s',
-  whiteSpace: 'nowrap', letterSpacing: '0.01em',
-};
-
-const loginBtnStyle = {
-  display: 'inline-flex', alignItems: 'center', gap: 6,
-  padding: '0 20px', height: 38, borderRadius: 999,
-  fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
-  color: '#3f3f46', background: 'transparent',
-  border: '1px solid #d4d4d8', cursor: 'pointer', transition: 'all .2s',
-  whiteSpace: 'nowrap',
-};
-
-const profileBtnStyle = {
-  display: 'flex', alignItems: 'center', gap: 8,
-  padding: '4px 12px 4px 4px', borderRadius: 12,
-  background: '#f4f4f5', border: '1px solid #e4e4e7',
-  cursor: 'pointer', transition: 'all .2s',
-};
-
-function Avatar({ initials, size, radius }) {
+function Avatar({ initials, size = 'sm' }) {
+  const cls = size === 'lg'
+    ? 'w-11 h-11 text-sm'
+    : size === 'md'
+    ? 'w-9 h-9 text-xs'
+    : 'w-[30px] h-[30px] text-[11px]';
   return (
-    <div style={{
-      width: size, height: size, borderRadius: radius,
-      background: 'linear-gradient(135deg, #f97316, #ea580c)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      fontFamily: "'Syne', sans-serif",
-      fontSize: size * 0.35, fontWeight: 700, color: '#fff', flexShrink: 0,
-    }}>
+    <div className={`${cls} rounded-full bg-orange-500 flex items-center justify-center font-bold text-white font-syne shrink-0`}>
       {initials}
     </div>
   );
 }
 
-function NavLink({ label, href }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <a href={href} style={{
-      display: 'inline-flex', alignItems: 'center', gap: 6,
-      padding: '7px 16px', borderRadius: 999,
-      fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 500,
-      color: hov ? '#0f172a' : '#52525b',
-      background: hov ? '#f4f4f5' : 'transparent',
-      textDecoration: 'none', transition: 'all .2s', whiteSpace: 'nowrap',
-    }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
-      {label}
-    </a>
-  );
-}
-
 function DropItem({ icon: Icon, label, onClick, danger }) {
-  const [hov, setHov] = useState(false);
   return (
-    <button onClick={onClick} style={{
-      display: 'flex', alignItems: 'center', gap: 12,
-      padding: '10px 14px', width: '100%', textAlign: 'left',
-      fontFamily: "'Inter', sans-serif", fontSize: 13.5, fontWeight: 500,
-      color: danger ? (hov ? '#dc2626' : '#ef4444') : (hov ? '#0f172a' : '#52525b'),
-      background: hov ? (danger ? '#fef2f2' : '#f4f4f5') : 'transparent',
-      border: 'none', cursor: 'pointer', transition: 'all .15s',
-    }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3.5 py-2.5 w-full text-left text-[13px] font-medium transition-colors duration-150
+        ${danger
+          ? 'text-red-400 hover:text-red-600 hover:bg-red-50'
+          : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-50'
+        }`}
     >
-      {Icon && <Icon size={16} style={{ color: danger ? '#ef4444' : '#a1a1aa' }} />}
+      {Icon && <Icon size={15} className={danger ? 'text-red-400' : 'text-zinc-400'} />}
       {label}
     </button>
   );
@@ -143,12 +53,11 @@ export default function Navbar({ onLoginClick, onSignupClick }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropRef = useRef(null);
 
   useEffect(() => {
     const fn = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
-        setProfileOpen(false);
+      if (dropRef.current && !dropRef.current.contains(e.target)) setProfileOpen(false);
     };
     document.addEventListener('mousedown', fn);
     return () => document.removeEventListener('mousedown', fn);
@@ -170,195 +79,165 @@ export default function Navbar({ onLoginClick, onSignupClick }) {
 
   return (
     <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link href={FONT_URL} rel="stylesheet" />
-      <style>{GLOBAL_CSS}</style>
-
-      {/* Announcement bar */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0f172a, #1e293b)',
-        padding: '8px 20px',
-        textAlign: 'center',
-      }}>
-        <p style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: 12, color: 'rgba(255,255,255,0.75)', margin: 0,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-        }}>
-          <HiOutlineSparkles size={14} color="#fbbf24" />
-          New customers get{' '}
-          <button onClick={onSignupClick} style={{
-            background: 'none', border: 'none', padding: 0, cursor: 'pointer',
-            fontWeight: 700, color: '#fbbf24', fontFamily: 'inherit', fontSize: 'inherit',
-            textDecoration: 'underline', textDecorationColor: 'rgba(251,191,36,0.5)',
-          }}>
-            ₹150 off
-          </button>
-          {' '}first booking — verified technicians · fixed pricing · 30-day warranty
-        </p>
+      {/* ── Announcement bar ── */}
+      <div className="bg-slate-900 px-4 py-2 overflow-hidden ">
+        <div className="max-w-6xl mx-auto">
+          {/* Desktop: static centered */}
+          <div className="hidden sm:flex items-center justify-center">
+            <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[11.5px] text-white/70">
+              <HiOutlineSparkles size={13} className="text-amber-400 shrink-0" />
+              New customers get{' '}
+              <button
+                onClick={onSignupClick}
+                className="font-bold text-amber-400 underline underline-offset-2 decoration-amber-400/50 hover:text-amber-300 transition-colors bg-transparent border-0 p-0 cursor-pointer text-[inherit]"
+              >
+                ₹150 off
+              </button>
+              {' '}first booking
+              <span className="text-white/25 mx-0.5">·</span>
+              <span className="inline-flex items-center gap-1">
+                <span className="bg-amber-400/15 text-amber-400 tracking-wider">Verified</span>
+                technicians
+              </span>
+              <span className="text-white/25 mx-0.5">·</span>
+              Fixed pricing
+              <span className="text-white/25 mx-0.5">·</span>
+              30-day warranty
+            </p>
+          </div>
+          {/* Mobile: scrolling */}
+          <div className="sm:hidden">
+            <div className="animate-marquee whitespace-nowrap">
+              <span className="inline-flex items-center gap-6 text-[11.5px] text-white/70">
+                <span className="inline-flex items-center gap-1.5">
+                  <HiOutlineSparkles size={13} className="text-amber-400 shrink-0" />
+                  New customers get <button onClick={onSignupClick} className="font-bold text-amber-400 underline underline-offset-2 decoration-amber-400/50 bg-transparent border-0 p-0 cursor-pointer">₹150 off</button> first booking
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="bg-amber-400/15 text-amber-400 border border-amber-400/30 rounded px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider">Verified</span>
+                  technicians
+                </span>
+                <span>Fixed pricing</span>
+                <span>30-day warranty</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <HiOutlineSparkles size={13} className="text-amber-400 shrink-0" />
+                  New customers get <button onClick={onSignupClick} className="font-bold text-amber-400 underline underline-offset-2 decoration-amber-400/50 bg-transparent border-0 p-0 cursor-pointer">₹150 off</button> first booking
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span className="bg-amber-400/15 text-amber-400 border border-amber-400/30 rounded px-1.5 py-0.5 text-[9.5px] font-bold uppercase tracking-wider">Verified</span>
+                  technicians
+                </span>
+                <span>Fixed pricing</span>
+                <span>30-day warranty</span>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Main navbar */}
-      <nav style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 999,
-        background: scrolled ? 'rgba(255,255,255,0.98)' : '#ffffff',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: `1px solid ${scrolled ? '#e4e4e7' : '#f0f0f0'}`,
-        boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.06)' : 'none',
-        transition: 'box-shadow .3s, border-color .3s',
-        fontFamily: "'Inter', sans-serif",
-      }}>
-        <div style={{
-          maxWidth: 1200, margin: '0 auto',
-          padding: '0 24px', height: 66,
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', gap: 16,
-        }}>
+      {/* ── Main Navbar ── */}
+      <nav
+        className={`sticky top-0 z-50 bg-white/[0.98] backdrop-blur-xl font-inter transition-all duration-300
+          ${scrolled ? 'border-b border-zinc-200 shadow-[0_4px_20px_rgba(0,0,0,0.06)]' : 'border-b border-zinc-100'}`}
+      >
+        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
 
-          {/* Professional Logo */}
+          {/* Logo */}
           <button
             onClick={() => navigate('/')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
-            }}
+            className="flex items-center gap-2.5 shrink-0 bg-transparent border-0 cursor-pointer p-0"
           >
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: 'linear-gradient(135deg, #f97316, #ea580c)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <HiOutlineBriefcase size={18} color="#fff" />
+            <div className="w-[34px] h-[34px] rounded-[9px] bg-orange-500 flex items-center justify-center">
+              <HiOutlineBriefcase size={16} className="text-white" />
             </div>
-            <div style={{ lineHeight: 1 }}>
-              <div style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: 20, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em',
-              }}>
-                Fix<span style={{ color: '#f97316' }}>Pro</span>
+            <div className="leading-none">
+              <div className="font-syne text-[19px] font-extrabold text-slate-900 tracking-tight">
+                Fix<span className="text-orange-500">Pro</span>
               </div>
-              <div style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 9, fontWeight: 600, letterSpacing: '0.1em',
-                textTransform: 'uppercase', color: '#64748b', marginTop: 2,
-              }}>
+              <div className="text-[9px] font-semibold tracking-[0.1em] uppercase text-slate-400 mt-0.5">
                 Service Solutions
               </div>
             </div>
           </button>
 
           {/* Desktop nav links */}
-          <div className="nv-desktop-links" style={{
-            flex: 1, justifyContent: 'center', alignItems: 'center', gap: 4,
-          }}>
+          <div className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
             {NAV_LINKS.map(({ label, href }) => (
-              <NavLink key={label} label={label} href={href} />
+              <a
+                key={label}
+                href={href}
+                className="px-4 py-2 rounded-full text-[13.5px] font-medium text-zinc-500 hover:text-slate-900 hover:bg-zinc-100 transition-all duration-150 no-underline whitespace-nowrap"
+              >
+                {label}
+              </a>
             ))}
           </div>
 
           {/* Right section */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-
+          <div className="flex items-center gap-2 shrink-0">
             {isAuthenticated ? (
               <>
-                {/* Bell notification */}
-                <button className="nv-bell" style={iconBtnStyle}
-                  aria-label="Notifications"
-                  onMouseEnter={e => Object.assign(e.currentTarget.style, { background: '#e4e4e7', color: '#0f172a' })}
-                  onMouseLeave={e => Object.assign(e.currentTarget.style, { background: '#f4f4f5', color: '#52525b' })}
-                >
-                  <span style={{
-                    position: 'absolute', top: 8, right: 8,
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: '#f97316', border: '2px solid #fff',
-                  }} />
-                  <HiOutlineBell size={18} />
+                {/* Bell */}
+                <button className="hidden md:flex w-9 h-9 rounded-[9px] bg-zinc-100 border border-zinc-200 text-zinc-500 hover:bg-zinc-200 hover:text-slate-900 items-center justify-center transition-all relative">
+                  <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500 border-2 border-white" />
+                  <HiOutlineBell size={17} />
                 </button>
 
                 {/* Book Now */}
-                <button className="nv-book-btn" style={ctaBtnStyle}
+                <button
                   onClick={() => navigate('/dashboard/book')}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#1e293b'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#0f172a'; e.currentTarget.style.transform = 'scale(1)'; }}
+                  className="hidden md:inline-flex items-center gap-1.5 px-4 h-9 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-[13px] font-semibold border-0 cursor-pointer transition-all hover:scale-[1.02] whitespace-nowrap"
                 >
-                  <HiOutlineCalendar size={16} />
+                  <HiOutlineCalendar size={14} />
                   Book Now
                 </button>
 
                 {/* Profile dropdown */}
-                <div style={{ position: 'relative' }} ref={dropdownRef}>
+                <div className="relative" ref={dropRef}>
                   <button
-                    style={profileBtnStyle}
                     onClick={() => setProfileOpen(!profileOpen)}
-                    onMouseEnter={e => e.currentTarget.style.background = '#e4e4e7'}
-                    onMouseLeave={e => e.currentTarget.style.background = '#f4f4f5'}
+                    className="flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-xl bg-zinc-100 border border-zinc-200 hover:bg-zinc-200 transition-all cursor-pointer"
                   >
-                    <Avatar initials={initials} size={30} radius="50%" />
-                    <span className="nv-username" style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontSize: 13, fontWeight: 600, color: '#0f172a',
-                    }}>
+                    <Avatar initials={initials} size="sm" />
+                    <span className="hidden md:block text-[13px] font-semibold text-slate-900">
                       {user?.name?.split(' ')[0]}
                     </span>
-                    <HiOutlineChevronDown size={12} style={{ color: '#a1a1aa', transition: 'transform .22s ease', transform: profileOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+                    <HiOutlineChevronDown
+                      size={11}
+                      className={`text-zinc-400 transition-transform duration-200 ${profileOpen ? 'rotate-180' : ''}`}
+                    />
                   </button>
 
+                  {/* Dropdown */}
                   {profileOpen && (
-                    <div style={{
-                      position: 'absolute', right: 0, top: 'calc(100% + 8px)',
-                      width: 280, borderRadius: 16, overflow: 'hidden',
-                      background: '#ffffff',
-                      border: '1px solid #e4e4e7',
-                      boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
-                      animation: 'nv-drop .22s cubic-bezier(.16,1,.3,1)',
-                      zIndex: 100,
-                    }}>
+                    <div className="absolute right-0 top-[calc(100%+8px)] w-[270px] rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-[0_16px_40px_rgba(0,0,0,0.1)] z-50 animate-[drop_0.2s_cubic-bezier(0.16,1,0.3,1)]">
                       {/* Header */}
-                      <div style={{
-                        padding: '16px', display: 'flex', alignItems: 'center', gap: 12,
-                        background: 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
-                        borderBottom: '1px solid #e4e4e7',
-                      }}>
-                        <Avatar initials={initials} size={44} radius="50%" />
+                      <div className="flex items-center gap-3 p-3.5 bg-slate-50 border-b border-zinc-100">
+                        <Avatar initials={initials} size="lg" />
                         <div>
-                          <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>
-                            {user?.name}
-                          </p>
-                          <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, color: '#94a3b8', margin: '3px 0 0' }}>
-                            {user?.email}
-                          </p>
+                          <p className="font-syne text-[13.5px] font-bold text-slate-900 m-0">{user?.name}</p>
+                          <p className="text-[11px] text-slate-400 mt-0.5 m-0">{user?.email}</p>
                         </div>
                       </div>
 
                       {/* Stats */}
-                      <div style={{
-                        display: 'grid', gridTemplateColumns: 'repeat(3,1fr)',
-                        borderBottom: '1px solid #f1f5f9',
-                        background: '#fafafa',
-                      }}>
+                      <div className="grid grid-cols-3 border-b border-zinc-100 bg-zinc-50">
                         {[{ val: '3', lbl: 'Active' }, { val: '12', lbl: 'Done' }, { val: '4.8', lbl: 'Rating' }].map((s, i) => (
-                          <div key={s.lbl} style={{
-                            padding: '12px 0', textAlign: 'center',
-                            borderRight: i < 2 ? '1px solid #f1f5f9' : 'none',
-                          }}>
-                            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, color: '#f97316' }}>{s.val}</div>
-                            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 10, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 2 }}>{s.lbl}</div>
+                          <div key={s.lbl} className={`py-3 text-center ${i < 2 ? 'border-r border-zinc-100' : ''}`}>
+                            <div className="font-syne text-[15px] font-bold text-orange-500">{s.val}</div>
+                            <div className="text-[9.5px] text-slate-400 uppercase tracking-wider mt-0.5">{s.lbl}</div>
                           </div>
                         ))}
                       </div>
 
-                      {/* Menu items */}
-                      <div style={{ padding: '6px 0' }}>
+                      {/* Menu */}
+                      <div className="py-1.5">
                         <DropItem icon={HiOutlineHome} label="Dashboard" onClick={() => { navigate('/dashboard'); setProfileOpen(false); }} />
                         <DropItem icon={HiOutlineCalendar} label="My Bookings" onClick={() => { navigate('/dashboard/bookings'); setProfileOpen(false); }} />
                         <DropItem icon={HiOutlineUser} label="Profile" onClick={() => { navigate('/dashboard/profile'); setProfileOpen(false); }} />
                         <DropItem icon={HiOutlineCog} label="Settings" onClick={() => { navigate('/dashboard/settings'); setProfileOpen(false); }} />
                       </div>
-
-                      <div style={{ borderTop: '1px solid #f1f5f9', padding: '6px 0' }}>
+                      <div className="border-t border-zinc-100 py-1.5">
                         <DropItem icon={HiOutlineArrowRightOnRectangle} label="Sign out" danger onClick={handleLogout} />
                       </div>
                     </div>
@@ -367,154 +246,110 @@ export default function Navbar({ onLoginClick, onSignupClick }) {
               </>
             ) : (
               <>
-                <button style={loginBtnStyle} onClick={onLoginClick}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.borderColor = '#d4d4d8'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#3f3f46'; e.currentTarget.style.borderColor = '#d4d4d8'; }}
+                <button
+                  onClick={onLoginClick}
+                  className="inline-flex items-center gap-1.5 px-5 h-9 rounded-full bg-transparent border border-zinc-300 text-zinc-500 hover:bg-zinc-100 hover:text-slate-900 text-[13px] font-medium cursor-pointer transition-all whitespace-nowrap"
                 >
-                  <HiOutlineUser size={14} />
+                  <HiOutlineUser size={13} />
                   Log in
                 </button>
-
-                <button className="nv-cta-btn" style={ctaBtnStyle} onClick={onSignupClick}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#1e293b'; e.currentTarget.style.transform = 'scale(1.02)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#0f172a'; e.currentTarget.style.transform = 'scale(1)'; }}
+                <button
+                  onClick={onSignupClick}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-5 h-9 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-semibold border-0 cursor-pointer transition-all hover:scale-[1.02] whitespace-nowrap"
                 >
                   Get Started
-                  <HiOutlineArrowRight size={14} />
+                  <HiOutlineArrowRight size={13} />
                 </button>
               </>
             )}
 
             {/* Hamburger */}
-            <button className="nv-hamburger" style={iconBtnStyle}
+            <button
               onClick={() => setMenuOpen(!menuOpen)}
+              className="lg:hidden flex w-9 h-9 rounded-[9px] bg-zinc-100 border border-zinc-200 text-zinc-500 hover:bg-zinc-200 hover:text-slate-900 items-center justify-center transition-all"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-              onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#52525b'; }}
             >
-              {menuOpen ? <HiOutlineXMark size={20} /> : <HiOutlineBars3 size={20} />}
+              {menuOpen ? <HiOutlineXMark size={19} /> : <HiOutlineBars3 size={19} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* ── Mobile menu ── */}
         {menuOpen && (
-          <div style={{
-            borderTop: '1px solid #f1f5f9',
-            background: '#ffffff',
-            animation: 'nv-mobile-in .2s ease-out',
-          }}>
+          <div className="lg:hidden border-t border-zinc-100 bg-white animate-[mobilein_0.18s_ease-out]">
             {/* Nav links */}
-            <div style={{ borderBottom: '1px solid #f1f5f9' }}>
+            <div className="border-b border-zinc-100">
               {NAV_LINKS.map(({ label, href }) => (
-                <a key={label} href={href} onClick={() => setMenuOpen(false)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '14px 24px', textDecoration: 'none',
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: 14, fontWeight: 500, color: '#52525b',
-                    transition: 'all .15s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#0f172a'; e.currentTarget.style.background = '#f8fafc'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = '#52525b'; e.currentTarget.style.background = 'transparent'; }}
+                <a
+                  key={label}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center px-5 py-3.5 text-[14px] font-medium text-zinc-500 hover:text-slate-900 hover:bg-slate-50 transition-all no-underline"
                 >
                   {label}
                 </a>
               ))}
             </div>
 
-            <div style={{ padding: 16 }}>
+            <div className="p-4">
               {isAuthenticated ? (
                 <>
                   {/* User card */}
-                  <div style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
-                    padding: '12px 14px', borderRadius: 14, marginBottom: 12,
-                    background: '#fff7ed', border: '1px solid #fed7aa',
-                  }}>
-                    <Avatar initials={initials} size={44} radius="50%" />
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-orange-50 border border-orange-200 mb-3">
+                    <Avatar initials={initials} size="md" />
                     <div>
-                      <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, color: '#0f172a', margin: 0 }}>{user?.name}</p>
-                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 11, color: '#94a3b8', margin: '3px 0 0' }}>{user?.role || 'Member'}</p>
+                      <p className="font-syne text-[13.5px] font-bold text-slate-900 m-0">{user?.name}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5 m-0">{user?.role || 'Member'}</p>
                     </div>
                   </div>
 
-                  <button style={{ ...ctaBtnStyle, width: '100%', justifyContent: 'center', height: 44, marginBottom: 12, borderRadius: 12 }}
-                    onClick={() => { navigate('/dashboard/book'); setMenuOpen(false); }}>
-                    <HiOutlineCalendar size={16} />
+                  {/* Book btn */}
+                  <button
+                    onClick={() => { navigate('/dashboard/book'); setMenuOpen(false); }}
+                    className="w-full flex items-center justify-center gap-2 h-11 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-[14px] font-semibold border-0 cursor-pointer transition-all mb-3"
+                  >
+                    <HiOutlineCalendar size={15} />
                     Book a Service
                   </button>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {/* Grid */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { icon: HiOutlineHome, label: 'Dashboard', to: '/dashboard' },
+                      { icon: HiOutlineCalendar, label: 'Bookings', to: '/dashboard/bookings' },
+                      { icon: HiOutlineUser, label: 'Profile', to: '/dashboard/profile' },
+                    ].map(({ icon: Icon, label, to }) => (
+                      <button
+                        key={label}
+                        onClick={() => { navigate(to); setMenuOpen(false); }}
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-zinc-100 border border-zinc-200 text-[13px] font-semibold text-zinc-500 hover:bg-zinc-200 hover:text-slate-900 transition-all cursor-pointer"
+                      >
+                        <Icon size={15} />
+                        {label}
+                      </button>
+                    ))}
                     <button
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: '11px 14px', borderRadius: 12, width: '100%',
-                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
-                        color: '#3f3f46', background: '#f4f4f5',
-                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
-                      }}
-                      onClick={() => { navigate('/dashboard'); setMenuOpen(false); }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
-                    >
-                      <HiOutlineHome size={16} />
-                      Dashboard
-                    </button>
-                    <button
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: '11px 14px', borderRadius: 12, width: '100%',
-                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
-                        color: '#3f3f46', background: '#f4f4f5',
-                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
-                      }}
-                      onClick={() => { navigate('/dashboard/bookings'); setMenuOpen(false); }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
-                    >
-                      <HiOutlineCalendar size={16} />
-                      Bookings
-                    </button>
-                    <button
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: '11px 14px', borderRadius: 12, width: '100%',
-                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
-                        color: '#3f3f46', background: '#f4f4f5',
-                        border: '1px solid #e4e4e7', cursor: 'pointer', transition: 'all .15s',
-                      }}
-                      onClick={() => { navigate('/dashboard/profile'); setMenuOpen(false); }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#e4e4e7'; e.currentTarget.style.color = '#0f172a'; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#f4f4f5'; e.currentTarget.style.color = '#3f3f46'; }}
-                    >
-                      <HiOutlineUser size={16} />
-                      Profile
-                    </button>
-                    <button
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 8,
-                        padding: '11px 14px', borderRadius: 12, width: '100%',
-                        fontFamily: "'Inter', sans-serif", fontSize: 13, fontWeight: 600,
-                        color: '#ef4444', background: '#fef2f2',
-                        border: '1px solid #fecaca', cursor: 'pointer', transition: 'all .15s',
-                      }}
                       onClick={handleLogout}
-                      onMouseEnter={e => e.currentTarget.style.background = '#fee2e2'}
-                      onMouseLeave={e => e.currentTarget.style.background = '#fef2f2'}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-red-50 border border-red-200 text-[13px] font-semibold text-red-500 hover:bg-red-100 transition-all cursor-pointer"
                     >
-                      <HiOutlineArrowRightOnRectangle size={16} />
+                      <HiOutlineArrowRightOnRectangle size={15} className="text-red-500" />
                       Logout
                     </button>
                   </div>
                 </>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                  <button style={{ ...loginBtnStyle, height: 46, justifyContent: 'center', borderRadius: 12 }} onClick={onLoginClick}>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <button
+                    onClick={onLoginClick}
+                    className="flex items-center justify-center gap-1.5 h-11 rounded-xl bg-transparent border border-zinc-300 text-zinc-500 text-[13.5px] font-medium cursor-pointer hover:bg-zinc-100 transition-all"
+                  >
                     <HiOutlineUser size={14} />
                     Log in
                   </button>
-                  <button style={{ ...ctaBtnStyle, height: 46, justifyContent: 'center', borderRadius: 12 }} onClick={onSignupClick}>
+                  <button
+                    onClick={onSignupClick}
+                    className="flex items-center justify-center gap-1.5 h-11 rounded-xl bg-slate-900 text-white text-[13.5px] font-semibold border-0 cursor-pointer hover:bg-slate-800 transition-all"
+                  >
                     Sign Up
                     <HiOutlineArrowRight size={14} />
                   </button>
@@ -524,6 +359,25 @@ export default function Navbar({ onLoginClick, onSignupClick }) {
           </div>
         )}
       </nav>
+
+      {/* Keyframes — add to your global CSS / tailwind.config */}
+      <style>{`
+        @keyframes drop {
+          from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+          to   { opacity: 1; transform: none; }
+        }
+        @keyframes mobilein {
+          from { opacity: 0; transform: translateY(-4px); }
+          to   { opacity: 1; transform: none; }
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 15s linear infinite;
+        }
+      `}</style>
     </>
   );
 }
